@@ -4,54 +4,55 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.todo.persistence.Task;
+import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
+@RequestMapping("/task")
 public class TaskController {
 
     private final TaskService taskService;
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public String getIndex(Model model) {
         model.addAttribute("tasks", taskService.findAll());
-        return "index";
+        return "task/list";
     }
 
-    @GetMapping("/task/create")
+    @GetMapping("/create")
     public String getCreatePage(Model model) {
         Task task = new Task();
         model.addAttribute("task", task);
-        return "/task/create";
+        return "task/create";
     }
 
-    @PostMapping("/task/create")
+    @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.create(task);
-            return "redirect:/";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+            if (taskService.create(task)) {
+                model.addAttribute("message", "Ошибка создания задачи");
+                return "errors/404";
+            }
+        return "redirect:/task/list";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Task task, Model model) {
+        if (!taskService.update(task)) {
+            model.addAttribute("message", "Ошибка при редактировании задачи");
             return "errors/404";
         }
+        return "redirect:/task/list";
     }
-
-    @PostMapping("/task/update")
-    public String update(@ModelAttribute Task task, Model model) {
-        taskService.update(task);
-        return "redirect:/";
-    }
-    @PostMapping("/task/complete")
+    @PostMapping("/complete")
     public String complete(@ModelAttribute Task task, Model model) {
         task.setDone(true);
         taskService.update(task);
-        return "redirect:/";
+        return "redirect:/task/list";
     }
-    @GetMapping("/task/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String getByIdEdit(Model model, @PathVariable int id) {
         var optional = taskService.findById(id);
         if (optional.isEmpty()) {
@@ -62,13 +63,16 @@ public class TaskController {
         return "task/one";
     }
 
-    @GetMapping("/task/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        taskService.deleteById(id);
-        return "redirect:/";
+        if (!taskService.deleteById(id)) {
+            model.addAttribute("message", "Ошибка при удалении задачи");
+            return "errors/404";
+        }
+        return "redirect:/task/list";
     }
 
-    @GetMapping("/task/{id}")
+    @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
         var optional = taskService.findById(id);
         if (optional.isEmpty()) {
@@ -79,17 +83,15 @@ public class TaskController {
         return "task/look";
     }
 
-    @GetMapping("/task/onlyDone")
+    @GetMapping("/onlyDone")
     public String getIndexOnlyDone(Model model) {
-        model.addAttribute("tasks", taskService.findAll().stream()
-                .filter(Task::isDone).collect(Collectors.toList()));
-        return "index";
+        model.addAttribute("tasks", taskService.findOnlyTrue());
+        return "task/list";
     }
 
-    @GetMapping("/task/onlyNotDone")
+    @GetMapping("/onlyNotDone")
     public String getIndexOnlyNotDone(Model model) {
-        model.addAttribute("tasks", taskService.findAll().stream()
-                .filter(p -> !p.isDone()).collect(Collectors.toList()));
-        return "index";
+        model.addAttribute("tasks", taskService.findOnlyFalse());
+        return "task/list";
     }
 }

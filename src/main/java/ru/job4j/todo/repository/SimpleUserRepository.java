@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import ru.job4j.todo.persistence.User;
+import ru.job4j.todo.model.User;
 
 import java.util.Optional;
 @Repository

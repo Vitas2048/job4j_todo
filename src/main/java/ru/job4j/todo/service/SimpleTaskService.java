@@ -3,7 +3,7 @@ package ru.job4j.todo.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.job4j.todo.persistence.Task;
+import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.TaskRepository;
 
 import java.util.List;
@@ -27,17 +27,27 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public Task create(Task task) {
-        return taskRepository.create(task);
+    public boolean create(Task task) {
+        return taskRepository.create(task) == null;
     }
 
     @Override
-    public void update(Task task) {
-        taskRepository.update(task);
+    public boolean update(Task task) {
+        return taskRepository.update(task);
     }
 
     @Override
-    public void deleteById(int id) {
-        taskRepository.deleteById(id);
+    public boolean deleteById(int id) {
+        return taskRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Task> findOnlyTrue() {
+        return taskRepository.findOnlyTrue();
+    }
+
+    @Override
+    public List<Task> findOnlyFalse() {
+        return taskRepository.findOnlyFalse();
     }
 }

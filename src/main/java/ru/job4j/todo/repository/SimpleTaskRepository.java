@@ -3,8 +3,9 @@ package ru.job4j.todo.repository;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import ru.job4j.todo.persistence.Task;
+import ru.job4j.todo.model.Task;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,8 +22,7 @@ public class SimpleTaskRepository implements TaskRepository {
     public List<Task> findAll() {
         Session session = sf.openSession();
         session.beginTransaction();
-        List<Task> tasks = session.createQuery("from Task", Task.class).list()
-                .stream().sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
+        List<Task> tasks = session.createQuery("from Task order by id", Task.class).list();
         session.getTransaction().commit();
         session.close();
         return tasks;
@@ -32,7 +32,9 @@ public class SimpleTaskRepository implements TaskRepository {
     public Optional<Task> findById(int id) {
         Session session = sf.openSession();
         session.beginTransaction();
-        Optional<Task> task = Optional.ofNullable(session.get(Task.class, id));
+        Query<Task> query = session.createQuery("from Task as t where t.id = :fId", Task.class)
+                        .setParameter("fId", id);
+        Optional<Task> task = query.uniqueResultOptional();
         session.getTransaction().commit();
         session.close();
         return task;
@@ -49,22 +51,51 @@ public class SimpleTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public boolean update(Task task) {
         Session session = sf.openSession();
         session.beginTransaction();
-        session.update(task);
+        Query query = session.createQuery("""
+                    update Task set description=:fDescription, created=:fCreated, done=:fDone where id=:fId
+                    """).setParameter("fDescription", task.getDescription())
+                    .setParameter("fCreated", task.getCreated())
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId());
+        var res = query.executeUpdate();
         session.getTransaction().commit();
         session.close();
+        return res > 0;
     }
 
     @Override
-    public void deleteById(int id) {
+    public boolean deleteById(int id) {
         Session session = sf.openSession();
         session.beginTransaction();
-        Task task = new Task();
-        task.setId(id);
-        session.delete(task);
+        Query query = session.createQuery("""
+                    delete Task where id=:fId
+                    """).setParameter("fId", id);
+        var res = query.executeUpdate();
         session.getTransaction().commit();
         session.close();
+        return res > 0;
+    }
+
+    @Override
+    public List<Task> findOnlyTrue() {
+        Session session = sf.openSession();
+        session.beginTransaction();
+        List<Task> tasks = session.createQuery("from Task where done=true", Task.class).list();
+        session.getTransaction().commit();
+        session.close();
+        return tasks;
+    }
+
+    @Override
+    public List<Task> findOnlyFalse() {
+        Session session = sf.openSession();
+        session.beginTransaction();
+        List<Task> tasks = session.createQuery("from Task where done=false", Task.class).list();
+        session.getTransaction().commit();
+        session.close();
+        return tasks;
     }
 }

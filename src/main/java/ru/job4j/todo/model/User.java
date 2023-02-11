@@ -1,4 +1,4 @@
-package ru.job4j.todo.persistence;
+package ru.job4j.todo.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,6 @@
 package ru.job4j.todo.repository;
 
-import ru.job4j.todo.persistence.User;
+import ru.job4j.todo.model.User;
 
 import java.util.Optional;
 

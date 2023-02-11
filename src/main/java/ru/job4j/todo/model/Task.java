@@ -1,7 +1,8 @@
-package ru.job4j.todo.persistence;
+package ru.job4j.todo.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tasks")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor
 @Data
 public class Task {
     @Id
@@ -21,8 +23,4 @@ public class Task {
     private LocalDateTime created = LocalDateTime.now();
 
     private boolean done;
-
-    public Task() {
-
-    }
 }
