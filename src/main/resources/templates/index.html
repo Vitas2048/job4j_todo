@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <!--  Зависимости Bootstrap-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
+    <title>Список дел</title>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #e3f2fd;">
+        <div class="container">
+            <a class="navbar-brand" href="/">Job4jToDo</a>
+            <div class="collapse navbar-collapse">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Все задачи</a>
+                    <a class="nav-link" th:href="@{/task/onlyDone}">Выполненные</a>
+                    <a class="nav-link" th:href="@{/task/onlyNotDone}">Не выполненные</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-2">
+        <h3 style="text-align:center">Список дел</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Выполнено</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Дата создания</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="task: ${tasks}">
+                    <td th:text="${task.id}" />
+                    <td th:text="${task.done}" />
+                    <td><a th:text="${task.description}" th:href="@{/task/{taskId}(taskId=${task.id})}"></a></td>
+                    <td th:text="${task.created}" />
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-4"><a class="btn btn-light w-100" th:href="@{/task/create}">Добавить задание</a></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
