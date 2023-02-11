@@ -28,4 +28,11 @@
 <img src="img/head.png"/>
 <img src="img/donelist.png"/>
 <img src="img/newlist.png"/>
+<p>Список дел доступен только зарегистрированным пользователям:</p>
+<img src="img/loginpage.png"/>
+<p>Чтобы зарегистрироваться необходимо перейти по ссылке:</p>
+<img src="img/registration.png"/>
+<p>После входа будет доступен весь функционал приложения:</p>
+<img src="img/loggedin.png"/>
+Почта: vithag97@mail.ru<br>
 
