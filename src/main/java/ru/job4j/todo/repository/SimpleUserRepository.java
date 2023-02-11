@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
@@ -18,10 +19,16 @@ public class SimpleUserRepository implements UserRepository {
     public Optional<User> save(User user) {
         Session session = sf.openSession();
         session.beginTransaction();
-        session.save(user);
-        session.getTransaction().commit();
-        session.close();
-        return Optional.ofNullable(user);
+        try {
+            session.save(user);
+            session.getTransaction().commit();
+            session.close();
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            session.close();
+            return Optional.empty();
+        }
     }
 
     @Override

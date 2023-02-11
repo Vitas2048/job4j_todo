@@ -27,13 +27,11 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute User user, Model model) {
-        try {
-            userService.save(user);
-            return "redirect:/";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+        if (userService.save(user).isEmpty()) {
+            model.addAttribute("message", "Ошибка регистрации");
             return "errors/404";
         }
+        return "redirect:/";
     }
 
     @GetMapping("/login")
