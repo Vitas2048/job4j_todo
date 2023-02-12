@@ -23,7 +23,7 @@
 <li>Установить Maven</li>
 <li>Установить сервер БД PostgresSQL, при установке задать имя пользователя - postgres, пароль postgres, порт - 5432</li>
 <li>Скачать исходный код проекта с GitHub</li>
-<li>Открыть postgresSQL при помощи команды в терминале sudo ```shell
+<li>Открыть postgresSQL при помощи команды в терминале ```sudo
 -u postgres psql
 ```</li>
 <li>Создать и подключится к БД todo

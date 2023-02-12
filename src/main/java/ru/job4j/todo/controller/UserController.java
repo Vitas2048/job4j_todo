@@ -31,7 +31,7 @@ public class UserController {
             model.addAttribute("message", "Ошибка регистрации");
             return "errors/404";
         }
-        return "redirect:/";
+        return "redirect:/users/login";
     }
 
     @GetMapping("/login")

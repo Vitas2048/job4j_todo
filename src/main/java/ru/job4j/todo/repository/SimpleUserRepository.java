@@ -18,17 +18,17 @@ public class SimpleUserRepository implements UserRepository {
     @Override
     public Optional<User> save(User user) {
         Session session = sf.openSession();
-        session.beginTransaction();
         try {
+            session.beginTransaction();
             session.save(user);
             session.getTransaction().commit();
-            session.close();
-            return Optional.ofNullable(user);
+            return Optional.of(user);
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
             session.close();
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
