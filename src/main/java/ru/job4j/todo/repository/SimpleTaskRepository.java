@@ -80,22 +80,14 @@ public class SimpleTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findOnlyTrue() {
+    public List<Task> filterBy(boolean condition) {
         Session session = sf.openSession();
         session.beginTransaction();
-        List<Task> tasks = session.createQuery("from Task where done=true", Task.class).list();
+        List<Task> tasks = session.createQuery("from Task where done=:fCondition", Task.class)
+                .setParameter("fCondition", condition).list();
         session.getTransaction().commit();
         session.close();
         return tasks;
     }
 
-    @Override
-    public List<Task> findOnlyFalse() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> tasks = session.createQuery("from Task where done=false", Task.class).list();
-        session.getTransaction().commit();
-        session.close();
-        return tasks;
-    }
 }

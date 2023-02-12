@@ -42,12 +42,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> findOnlyTrue() {
-        return taskRepository.findOnlyTrue();
+    public List<Task> filterBy(boolean condition) {
+        return taskRepository.filterBy(condition);
     }
 
-    @Override
-    public List<Task> findOnlyFalse() {
-        return taskRepository.findOnlyFalse();
-    }
 }

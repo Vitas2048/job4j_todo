@@ -17,7 +17,5 @@ public interface TaskService {
 
     boolean deleteById(int id);
 
-    List<Task> findOnlyTrue();
-
-    List<Task> findOnlyFalse();
+    List<Task> filterBy(boolean condition);
 }

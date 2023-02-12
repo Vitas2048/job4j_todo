@@ -85,13 +85,13 @@ public class TaskController {
 
     @GetMapping("/onlyDone")
     public String getIndexOnlyDone(Model model) {
-        model.addAttribute("tasks", taskService.findOnlyTrue());
+        model.addAttribute("tasks", taskService.filterBy(true));
         return "task/list";
     }
 
     @GetMapping("/onlyNotDone")
     public String getIndexOnlyNotDone(Model model) {
-        model.addAttribute("tasks", taskService.findOnlyFalse());
+        model.addAttribute("tasks", taskService.filterBy(false));
         return "task/list";
     }
 }
