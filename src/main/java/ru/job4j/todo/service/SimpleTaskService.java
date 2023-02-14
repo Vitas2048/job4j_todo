@@ -15,7 +15,6 @@ public class SimpleTaskService implements TaskService {
 
     TaskRepository taskRepository;
 
-
     @Override
     public List<Task> findAll() {
         return taskRepository.findAll();
