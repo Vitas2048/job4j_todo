@@ -41,8 +41,13 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> filterBy(boolean condition) {
-        return taskRepository.filterBy(condition);
+    public List<Task> filterBy(boolean condition, int userId) {
+        return taskRepository.filterBy(condition, userId);
+    }
+
+    @Override
+    public List<Task> findAllByUser(int userId) {
+        return taskRepository.findAllByUser(userId);
     }
 
 }

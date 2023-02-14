@@ -17,5 +17,7 @@ public interface TaskService {
 
     boolean deleteById(int id);
 
-    List<Task> filterBy(boolean condition);
+    List<Task> filterBy(boolean condition, int userId);
+
+    List<Task> findAllByUser(int userId);
 }

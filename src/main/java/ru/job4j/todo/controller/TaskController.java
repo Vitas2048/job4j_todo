@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import java.util.stream.Collectors;
@@ -17,9 +18,9 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("/list")
-    public String getIndex(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
-        return "task/list";
+    public String getIndex(@SessionAttribute User user,  Model model) {
+            model.addAttribute("tasks", taskService.findAllByUser(user.getId()));
+            return "task/list";
     }
 
     @GetMapping("/create")
@@ -30,7 +31,8 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model) {
+    public String create(@SessionAttribute User user, @ModelAttribute Task task, Model model) {
+        task.setUser(user);
             if (taskService.create(task)) {
                 model.addAttribute("message", "Ошибка создания задачи");
                 return "errors/404";
@@ -84,14 +86,14 @@ public class TaskController {
     }
 
     @GetMapping("/onlyDone")
-    public String getIndexOnlyDone(Model model) {
-        model.addAttribute("tasks", taskService.filterBy(true));
-        return "task/list";
+    public String getIndexOnlyDone(@SessionAttribute User user, Model model) {
+            model.addAttribute("tasks", taskService.filterBy(true, user.getId()));
+            return "task/list";
     }
 
     @GetMapping("/onlyNotDone")
-    public String getIndexOnlyNotDone(Model model) {
-        model.addAttribute("tasks", taskService.filterBy(false));
-        return "task/list";
+    public String getIndexOnlyNotDone(@SessionAttribute User user, Model model) {
+            model.addAttribute("tasks", taskService.filterBy(false, user.getId()));
+            return "task/list";
     }
 }

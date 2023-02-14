@@ -54,8 +54,13 @@ public class SimpleTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> filterBy(boolean condition) {
-        return crudRepository.query("from Task where done = :fDone", Task.class, Map.of("fDone", condition));
+    public List<Task> filterBy(boolean condition, int userId) {
+        return crudRepository.query("from Task where done = :fDone and user_id=:fUserId", Task.class, Map.of("fDone", condition, "fUserId", userId));
+    }
+
+    @Override
+    public List<Task> findAllByUser(int userId) {
+        return crudRepository.query("from Task where user_id=:fUserId", Task.class, Map.of("fUserId", userId));
     }
 
 }
