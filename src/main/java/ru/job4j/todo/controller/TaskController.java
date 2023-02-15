@@ -6,9 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
-
-import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
@@ -16,6 +15,8 @@ import java.util.stream.Collectors;
 public class TaskController {
 
     private final TaskService taskService;
+
+    private final PriorityService priorityService;
 
     @GetMapping("/list")
     public String getIndex(@SessionAttribute User user,  Model model) {
@@ -33,16 +34,19 @@ public class TaskController {
     @PostMapping("/create")
     public String create(@SessionAttribute User user, @ModelAttribute Task task, Model model) {
         task.setUser(user);
-            if (taskService.create(task)) {
-                model.addAttribute("message", "Ошибка создания задачи");
-                return "errors/404";
-            }
+        if (priorityService.findById(task.getPriority().getId()).isEmpty() || taskService.create(task)) {
+            model.addAttribute("message", "Ошибка создания задачи");
+            return "errors/404";
+        }
+
         return "redirect:/task/list";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
-        if (!taskService.update(task)) {
+    public String update(@SessionAttribute User user,
+                         @ModelAttribute Task task, Model model) {
+        task.setUser(user);
+        if (!taskService.update(task) || priorityService.findById(task.getPriority().getId()).isEmpty()) {
             model.addAttribute("message", "Ошибка при редактировании задачи");
             return "errors/404";
         }

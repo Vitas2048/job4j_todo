@@ -16,13 +16,13 @@ public class SimpleTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> findAll() {
-        return crudRepository.query("from Task order by id", Task.class);
+        return crudRepository.query("from Task f JOIN FETCH f.priority order by id", Task.class);
     }
 
     @Override
     public Optional<Task> findById(int id) {
         return crudRepository.optional(
-                "from Task where id = :fId", Task.class, Map.of("fId", id));
+                "from Task f JOIN FETCH f.priority where f.id = :fId", Task.class, Map.of("fId", id));
     }
 
     @Override
@@ -55,12 +55,14 @@ public class SimpleTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> filterBy(boolean condition, int userId) {
-        return crudRepository.query("from Task where done = :fDone and user_id=:fUserId", Task.class, Map.of("fDone", condition, "fUserId", userId));
+        return crudRepository.query("from Task f JOIN FETCH f.priority where done = :fDone and user_id=:fUserId",
+                Task.class, Map.of("fDone", condition, "fUserId", userId));
     }
 
     @Override
     public List<Task> findAllByUser(int userId) {
-        return crudRepository.query("from Task where user_id=:fUserId", Task.class, Map.of("fUserId", userId));
+        return crudRepository.query("from Task f JOIN FETCH f.priority where user_id=:fUserId",
+                Task.class, Map.of("fUserId", userId));
     }
 
 }

@@ -41,6 +41,10 @@
       <div class="col-6"><a class="btn btn-primary w-60" th:href="@{/task/edit/{taskId}(taskId=${task.id})}">Редактировать</a></div>
     </div>
     <div class="form-group row">
+      <label for="priority" class="form-label">Приоритет</label>
+      <p class="form-control" id="priority" name="priority" th:text="*{priority}"/>
+    </div>
+    <div class="form-group row">
       <label for="description" class="form-label">Описание</label>
       <p class="form-control" id="description" name="description" th:text="*{description}"/>
     </div>
