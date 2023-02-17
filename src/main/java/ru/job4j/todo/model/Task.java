@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -30,4 +32,12 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priority_id")
     private Priority priority;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "task_cat",
+            joinColumns = { @JoinColumn(name = "task_id") },
+            inverseJoinColumns = { @JoinColumn(name = "cat_id") }
+    )
+    private List<Category> categories = new ArrayList<>();
 }

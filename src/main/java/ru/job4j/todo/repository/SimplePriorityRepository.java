@@ -14,10 +14,12 @@ public class SimplePriorityRepository implements PriorityRepository {
 
     private CrudRepository crudRepository;
 
+    @Override
     public List<Priority> findAll() {
         return crudRepository.query("from Priority", Priority.class);
     }
 
+    @Override
     public Optional<Priority> findById(int id) {
         return crudRepository.optional("from Priority where id=:fId", Priority.class, Map.of("fId", id));
     }

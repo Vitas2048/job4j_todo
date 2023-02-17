@@ -4,15 +4,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @AllArgsConstructor
 @RequestMapping("/task")
 public class TaskController {
+
+    private final CategoryService categoryService;
 
     private final TaskService taskService;
 
@@ -26,27 +35,37 @@ public class TaskController {
 
     @GetMapping("/create")
     public String getCreatePage(Model model) {
-        Task task = new Task();
+        var task = new Task();
+        model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("task", task);
+        model.addAttribute("categoryId", new ArrayList<Integer>());
         return "task/create";
     }
 
     @PostMapping("/create")
-    public String create(@SessionAttribute User user, @ModelAttribute Task task, Model model) {
+    public String create(@SessionAttribute User user, @ModelAttribute Task task,
+                         @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        if (priorityService.findById(task.getPriority().getId()).isEmpty() || taskService.create(task)) {
+        categoryId.forEach(p -> {
+            var optional = categoryService.findById(p);
+            optional.ifPresent(category -> task.getCategories().add(category));
+        });
+        if (taskService.create(task)) {
             model.addAttribute("message", "Ошибка создания задачи");
             return "errors/404";
         }
-
         return "redirect:/task/list";
     }
 
     @PostMapping("/update")
-    public String update(@SessionAttribute User user,
-                         @ModelAttribute Task task, Model model) {
+    public String update(@SessionAttribute User user, @ModelAttribute Task task,
+                         @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        if (!taskService.update(task) || priorityService.findById(task.getPriority().getId()).isEmpty()) {
+        categoryId.forEach(p -> {
+            var optional = categoryService.findById(p);
+            optional.ifPresent(category -> task.getCategories().add(category));
+        });
+        if (!taskService.update(task)) {
             model.addAttribute("message", "Ошибка при редактировании задачи");
             return "errors/404";
         }
@@ -60,6 +79,7 @@ public class TaskController {
     }
     @GetMapping("/edit/{id}")
     public String getByIdEdit(Model model, @PathVariable int id) {
+        model.addAttribute("categories", categoryService.findAll());
         var optional = taskService.findById(id);
         if (optional.isEmpty()) {
             model.addAttribute("message", "Заметка не найдена");
@@ -85,7 +105,9 @@ public class TaskController {
             model.addAttribute("message", "Заметка не найдена");
             return "errors/404";
         }
-        model.addAttribute("task", optional.get());
+        var task = optional.get();
+        model.addAttribute("categories", task.getCategories());
+        model.addAttribute("task", task);
         return "task/look";
     }
 

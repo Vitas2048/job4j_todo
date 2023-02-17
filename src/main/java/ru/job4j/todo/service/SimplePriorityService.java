@@ -13,10 +13,13 @@ import java.util.Optional;
 public class SimplePriorityService implements PriorityService {
 
     private PriorityRepository priorityRepository;
+
+    @Override
     public List<Priority> findAll() {
         return priorityRepository.findAll();
     }
 
+    @Override
     public Optional<Priority> findById(int id) {
         return priorityRepository.findById(id);
     }

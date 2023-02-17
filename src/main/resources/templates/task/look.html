@@ -53,13 +53,26 @@
       <p class="form-control" id="created" th:text="*{created}"/>
     </div>
     <div class="form-group row">
+<!--      <label for="cat">Категория</label>-->
+<!--      <ul id="cat" class="list-group" th:each="category: ${categories}">-->
+<!--        <li class="list-group-item" aria-current="true" th:text="${category.name}"/>-->
+<!--      </ul>-->
+    <table class="table table-bordered table-info" id="cat">
+      <tr th:each="category: ${categories}">
+      <td th:text="${category.name}"/>
+      </tr>
+    </table>
+    </div>
+    <div class="form-group row">
       <label for="done">Выполнено</label>
       <p class="form-control" id="done" th:text="*{done}"/>
     </div>
   </form>
   <form class="mt-3" th:action="@{/task/complete}" method="post" th:object="${task}" enctype="multipart/form-data">
     <input type="hidden" name="id" th:field="*{id}">
+    <input type="hidden" name="user.id" th:field="*{user.id}">
     <input type="hidden" name="description" th:field="*{description}">
+    <input type="hidden" name="priority.id" th:field="*{priority.id}">
     <input type="hidden" name="done" th:field="*{done}" value="true">
     <div class="d-grid gap-2 col-2 mx-auto"><button class="btn btn-success w-100" type="submit">Выполнено</button></div>
   </form>

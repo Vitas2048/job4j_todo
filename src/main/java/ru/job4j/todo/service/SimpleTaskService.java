@@ -3,7 +3,9 @@ package ru.job4j.todo.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.repository.PriorityRepository;
 import ru.job4j.todo.repository.TaskRepository;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class SimpleTaskService implements TaskService {
 
     TaskRepository taskRepository;
+
+    PriorityRepository priorityRepository;
 
     @Override
     public List<Task> findAll() {
@@ -27,12 +31,12 @@ public class SimpleTaskService implements TaskService {
 
     @Override
     public boolean create(Task task) {
-        return taskRepository.create(task) == null;
+        return taskRepository.create(task) == null && priorityExist(task);
     }
 
     @Override
     public boolean update(Task task) {
-        return taskRepository.update(task);
+        return taskRepository.update(task) || priorityExist(task);
     }
 
     @Override
@@ -48,6 +52,10 @@ public class SimpleTaskService implements TaskService {
     @Override
     public List<Task> findAllByUser(int userId) {
         return taskRepository.findAllByUser(userId);
+    }
+
+    private boolean priorityExist(Task task) {
+       return priorityRepository.findById(task.getPriority().getId()).isEmpty();
     }
 
 }

@@ -9,4 +9,6 @@
     <include file="scripts/002_ddl_create_todo_user.sql" relativeToChangelogFile="true"/>
     <include file="scripts/003_dml_alter_table_tasks.sql" relativeToChangelogFile="true"/>
     <include file="scripts/004_dml_PRIORITIES.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/005_ddl_create_categories_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/006_dml_categories.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
