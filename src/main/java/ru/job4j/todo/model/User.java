@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.util.TimeZone;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -20,4 +21,6 @@ public class User {
     private String login;
 
     private String password;
+
+    private TimeZone zone = TimeZone.getDefault();
 }

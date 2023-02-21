@@ -11,4 +11,6 @@
     <include file="scripts/004_dml_PRIORITIES.sql" relativeToChangelogFile="true"/>
     <include file="scripts/005_ddl_create_categories_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/006_dml_categories.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/007_ddl_task_cat.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/008_dml_column_zone.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -33,4 +33,19 @@ public class SimpleUserRepository implements UserRepository {
                 Map.of("fLogin", login,
                         "fPassword", password));
     }
+
+    @Override
+    public boolean update(User user) {
+        try {
+            crudRepository.run(session -> session.merge(user));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        return crudRepository.optional("from User where id = :fId", User.class, Map.of("fId", id));
+    }
 }

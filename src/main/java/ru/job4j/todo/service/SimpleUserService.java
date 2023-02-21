@@ -20,4 +20,13 @@ public class SimpleUserService implements UserService {
     public Optional<User> findByLoginAndPassword(String login, String password) {
         return userRepository.findByLoginAndPassword(login, password);
     }
+
+    @Override
+    public boolean update(User user) {
+        return userRepository.update(user);
+    }
+
+    public Optional<User> findById(int id) {
+     return userRepository.findById(id);
+    }
 }

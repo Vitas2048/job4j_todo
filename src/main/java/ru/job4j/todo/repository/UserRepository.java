@@ -8,4 +8,8 @@ public interface UserRepository {
     Optional<User> save(User user);
 
     Optional<User> findByLoginAndPassword(String login, String password);
+
+    boolean update(User user);
+
+    public Optional<User> findById(int id);
 }

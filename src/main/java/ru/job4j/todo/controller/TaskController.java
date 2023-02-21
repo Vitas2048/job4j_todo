@@ -11,10 +11,15 @@ import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.TimeZone;
+
 
 @Controller
 @AllArgsConstructor
@@ -25,12 +30,14 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    private final PriorityService priorityService;
-
     @GetMapping("/list")
     public String getIndex(@SessionAttribute User user,  Model model) {
-            model.addAttribute("tasks", taskService.findAllByUser(user.getId()));
-            return "task/list";
+        var zoneId = user.getZone().toZoneId();
+        var userTasks = taskService.findAllByUser(user.getId());
+        userTasks.forEach(p -> p.setCreated(p.getCreated()
+                        .atZone(TimeZone.getDefault().toZoneId()).withZoneSameInstant(zoneId).toLocalDateTime()));
+        model.addAttribute("tasks", new HashSet<>(userTasks));
+        return "task/list";
     }
 
     @GetMapping("/create")
@@ -46,10 +53,11 @@ public class TaskController {
     public String create(@SessionAttribute User user, @ModelAttribute Task task,
                          @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        categoryId.forEach(p -> {
-            var optional = categoryService.findById(p);
-            optional.ifPresent(category -> task.getCategories().add(category));
-        });
+        var allCat = categoryService.findAll();
+        var categories = categoryId.stream().map(p -> {
+            return allCat.get(p - 1);
+        }).toList();
+        task.getCategories().addAll(categories);
         if (taskService.create(task)) {
             model.addAttribute("message", "Ошибка создания задачи");
             return "errors/404";
@@ -61,18 +69,36 @@ public class TaskController {
     public String update(@SessionAttribute User user, @ModelAttribute Task task,
                          @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        categoryId.forEach(p -> {
-            var optional = categoryService.findById(p);
-            optional.ifPresent(category -> task.getCategories().add(category));
-        });
+        var allCat = categoryService.findAll();
+        var categories = categoryId.stream().map(p -> {
+            return allCat.get(p - 1);
+        }).toList();
+        task.getCategories().addAll(categories);
         if (!taskService.update(task)) {
             model.addAttribute("message", "Ошибка при редактировании задачи");
             return "errors/404";
         }
         return "redirect:/task/list";
     }
-    @PostMapping("/complete")
-    public String complete(@ModelAttribute Task task, Model model) {
+    @GetMapping("/{id}")
+    public String getById(Model model, @PathVariable int id) {
+        var optional = taskService.findById(id);
+        if (optional.isEmpty()) {
+            model.addAttribute("message", "Заметка не найдена");
+            return "errors/404";
+        }
+        var task = optional.get();
+        var categoriesId = task.getCategories().stream().map(Category::getId).toList();
+        var categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("task", task);
+        model.addAttribute("categoriesId", categoriesId);
+        return "task/look";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String complete(@PathVariable int id, Model model) {
+        var task = taskService.findById(id).get();
         task.setDone(true);
         taskService.update(task);
         return "redirect:/task/list";
@@ -96,19 +122,6 @@ public class TaskController {
             return "errors/404";
         }
         return "redirect:/task/list";
-    }
-
-    @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
-        var optional = taskService.findById(id);
-        if (optional.isEmpty()) {
-            model.addAttribute("message", "Заметка не найдена");
-            return "errors/404";
-        }
-        var task = optional.get();
-        model.addAttribute("categories", task.getCategories());
-        model.addAttribute("task", task);
-        return "task/look";
     }
 
     @GetMapping("/onlyDone")
