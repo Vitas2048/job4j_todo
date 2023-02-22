@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.config.TimeConfig;
 import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
@@ -27,10 +28,10 @@ public class TaskController {
 
     @GetMapping("/list")
     public String getIndex(@SessionAttribute User user,  Model model) {
-        var zoneId = user.getZone().toZoneId();
+        var defaultId = TimeZone.getDefault().toZoneId();
+        var userZoneId = user.getZone().toZoneId();
         var userTasks = taskService.findAllByUser(user.getId());
-        userTasks.forEach(p -> p.setCreated(p.getCreated()
-                        .atZone(TimeZone.getDefault().toZoneId()).withZoneSameInstant(zoneId).toLocalDateTime()));
+        userTasks.forEach(p -> p.setCreated(TimeConfig.userZoneConfig(p.getCreated(), defaultId, userZoneId)));
         model.addAttribute("tasks", new HashSet<>(userTasks));
         return "task/list";
     }
