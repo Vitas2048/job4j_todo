@@ -18,7 +18,7 @@ public class SimpleTaskRepository implements TaskRepository {
     @Override
     public List<Task> findAll() {
         return crudRepository.query("""
-                                        from Task f 
+                                        from Task f
                                         left JOIN FETCH f.priority
                                         left join fetch f.categories order by id
                                         """, Task.class);
