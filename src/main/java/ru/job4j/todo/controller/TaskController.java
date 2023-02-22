@@ -8,13 +8,8 @@ import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
-import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,10 +48,7 @@ public class TaskController {
     public String create(@SessionAttribute User user, @ModelAttribute Task task,
                          @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        var allCat = categoryService.findAll();
-        var categories = categoryId.stream().map(p -> {
-            return allCat.get(p - 1);
-        }).toList();
+        var categories = categoryService.findByIds(categoryId);
         task.getCategories().addAll(categories);
         if (taskService.create(task)) {
             model.addAttribute("message", "Ошибка создания задачи");
@@ -69,10 +61,7 @@ public class TaskController {
     public String update(@SessionAttribute User user, @ModelAttribute Task task,
                          @RequestParam("categoryId") List<Integer> categoryId, Model model) {
         task.setUser(user);
-        var allCat = categoryService.findAll();
-        var categories = categoryId.stream().map(p -> {
-            return allCat.get(p - 1);
-        }).toList();
+        var categories = categoryService.findByIds(categoryId);
         task.getCategories().addAll(categories);
         if (!taskService.update(task)) {
             model.addAttribute("message", "Ошибка при редактировании задачи");

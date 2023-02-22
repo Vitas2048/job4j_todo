@@ -9,7 +9,6 @@ import ru.job4j.todo.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.TimeZone;
 

@@ -22,4 +22,9 @@ public class SimpleCategoryRepository implements CategoryRepository {
     public Optional<Category> findById(int id) {
         return crudRepository.optional("from Category where id=:fId", Category.class, Map.of("fId", id));
     }
+
+    @Override
+    public List<Category> findByIds(List<Integer> ids) {
+        return crudRepository.query("from Category where id IN (:fValues)", Category.class, Map.of("fValues", ids));
+    }
 }
